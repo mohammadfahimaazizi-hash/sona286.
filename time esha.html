@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Empower · Teamwise Professional Portal</title>
+  <!-- Font Awesome 6 Free -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: #f4f7fc;
+      display: flex;
+      transition: background 0.2s, color 0.2s;
+      min-height: 100vh;
+    }
+
+    /* ----- light / dark variables (professional palette) ----- */
+    :root {
+      --bg-body: #f2f5f9;
+      --bg-sidebar: #0b1e2f;
+      --bg-card: #ffffff;
+      --text-primary: #0b1a2b;
+      --text-secondary: #2c3e50;
+      --shadow: 0 8px 24px rgba(0, 20, 40, 0.08);
+      --border-light: #e6ecf3;
+      --sidebar-text: #e2eaf5;
+      --accent: #1d4ed8;
+      --accent-hover: #1e3f9e;
+      --card-hover: #f8faff;
+      --badge-bg: #e0edff;
+      --badge-text: #1a3e7a;
+      --manager-bg: #d9f0e1;
+      --manager-text: #0b4f2e;
+      --team-bg: #eef3fa;
+    }
+
+    body.dark {
+      --bg-body: #101924;
+      --bg-sidebar: #09121e;
+      --bg-card: #1b2636;
+      --text-primary: #eef2f9;
+      --text-secondary: #c0ccdd;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      --border-light: #2b3a4f;
+      --sidebar-text: #d3def0;
+      --accent: #4f8cf7;
+      --accent-hover: #6ea0ff;
+      --card-hover: #253345;
+      --badge-bg: #1e3757;
+      --badge-text: #b6d4fe;
+      --manager-bg: #1e3f31;
+      --manager-text: #b3e0ca;
+      --team-bg: #1b2636;
+    }
+
+    body {
+      color: var(--text-primary);
+      background: var(--bg-body);
+    }
+
+    /* ----- sidebar (professional, refined) ----- */
+    .sidebar {
+      width: 280px;
+      height: 100vh;
+      background: var(--bg-sidebar);
+      color: var(--sidebar-text);
+      padding: 28px 18px;
+      position: sticky;
+      top: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      box-shadow: 2px 0 16px rgba(0, 0, 0, 0.12);
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .sidebar h2 {
+      font-weight: 600;
+      font-size: 24px;
+      letter-spacing: -0.4px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      padding: 0 4px;
+    }
+
+    .sidebar h2 i {
+      color: #7ba9ff;
+      font-size: 1.6rem;
+    }
+
+    .sidebar button {
+      width: 100%;
+      padding: 12px 16px;
+      margin: 2px 0;
+      border: none;
+      background: transparent;
+      color: var(--sidebar-text);
+      cursor: pointer;
+      border-radius: 12px;
+      text-align: left;
+      font-size: 15px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: 0.2s;
+    }
+
+    .sidebar button i {
+      width: 24px;
+      font-size: 1.1rem;
+      color: #8eb6ff;
+      transition: 0.2s;
+    }
+
+    .sidebar button:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+    }
+
+    .sidebar button:hover i {
+      color: white;
+    }
+
+    .sidebar button:active {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .sidebar .logout-btn {
+      margin-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 18px;
+      color: #f9b4b4;
+    }
+
+    .sidebar .logout-btn i {
+      color: #f68181;
+    }
+
+    .sidebar .logout-btn:hover {
+      background: rgba(255, 70, 70, 0.12);
+      color: #ffc9c9;
+    }
+
+    /* ----- main area (spacious, clean) ----- */
+    .main {
+      flex: 1;
+      padding: 32px 40px;
+      max-width: calc(100% - 280px);
+    }
+
+    .section {
+      display: none;
+      animation: fadeUp 0.3s ease;
+    }
+
+    #home {
+      display: block;
+    }
+
+    @keyframes fadeUp {
+      0% { opacity: 0.2; transform: translateY(8px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 22px;
+      margin: 24px 0;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      padding: 24px 20px;
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      transition: 0.2s;
+      border: 1px solid var(--border-light);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      background: var(--card-hover);
+    }
+
+    .stat-card h3 {
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stat-card .value {
+      font-size: 2.4rem;
+      font-weight: 700;
+      margin-top: 8px;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+    }
+
+    .stat-card i {
+      color: var(--accent);
+    }
+
+    /* tables */
+    .table-wrap {
+      background: var(--bg-card);
+      border-radius: 22px;
+      padding: 8px 0 4px 0;
+      box-shadow: var(--shadow);
+      margin: 28px 0;
+      border: 1px solid var(--border-light);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th {
+      text-align: left;
+      padding: 18px 24px;
+      background: var(--bg-body);
+      color: var(--text-secondary);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-light);
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--border-light);
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge {
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      padding: 5px 14px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge.inactive {
+      background: #ffe6e6;
+      color: #b33a3a;
+    }
+    body.dark .badge.inactive {
+      background: #442222;
+      color: #f7a8a8;
+    }
+
+    .badge.manager-badge {
+      background: var(--manager-bg);
+      color: var(--manager-text);
+    }
+    .badge.team-badge {
+      background: var(--team-bg);
+      color: var(--accent);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border: none;
+      padding: 10px 26px;
+      border-radius: 40px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 8px rgba(29, 78, 216, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: scale(1.02);
+      box-shadow: 0 6px 12px rgba(29, 78, 216, 0.25);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--border-light);
+      padding: 8px 22px;
+      border-radius: 40px;
+      cursor: pointer;
+      color: var(--text-primary);
+      transition: 0.2s;
+      font-weight: 500;
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-body);
+      border-color: var(--accent);
+    }
+
+    .flex-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 18px;
+      margin: 14px 0;
+    }
+
+    textarea, input[type="file"] {
+      background: var(--bg-body);
+      border: 1px solid var(--border-light);
+      border-radius: 18px;
+      padding: 12px 18px;
+      color: var(--text-primary);
+      width: 100%;
+      max-width: 420px;
+      resize: vertical;
+      font-size: 0.95rem;
+    }
+
+    textarea:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .section h1 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      letter-spacing: -0.3px;
+    }
+
+    .section h1 i {
+      color: var(--accent);
+    }
+
+    .sub-text {
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      font-size: 1rem;
+    }
+
+    .notification-item {
+      background: var(--bg-card);
+      padding: 18px 22px;
+      border-radius: 18px;
+      border-left: 5px solid var(--accent);
+      margin: 10px 0;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .settings-card {
+      background: var(--bg-card);
+      padding: 28px;
+      border-radius: 24px;
+      margin: 16px 0;
+      border: 1px solid var(--border-light);
+      max-width: 540px;
+      box-shadow: var(--shadow);
+    }
+
+    /* responsive */
+    @media (max-width: 820px) {
+      .sidebar {
+        width: 80px;
+        padding: 16px 8px;
+      }
+      .sidebar h2 span {
+        display: none;
+      }
+      .sidebar button span {
+        display: none;
+      }
+      .sidebar button {
+        justify-content: center;
+        padding: 14px 0;
+      }
+      .main {
+        padding: 24px 18px;
+        max-width: 100%;
+      }
+    }
+
+    /* theme toggle */
+    .theme-toggle {
+      margin-left: auto;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: white;
+      padding: 6px 16px;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255,255,255,0.18);
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .scrollable-table {
+      max-height: 400px;
+      overflow-y: auto;
+      display: block;
+    }
+    .scrollable-table table {
+      display: table;
+      width: 100%;
+    }
+
+    /* ----- employee profile cards (grid) ----- */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+    .profile-card {
+      background: var(--bg-card);
+      border-radius: 22px;
+      padding: 20px 18px;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow);
+      transition: 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .profile-card:hover {
+      transform: translateY(-4px);
+      background: var(--card-hover);
+    }
+    .profile-card .name {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    .profile-card .detail {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .profile-card .detail i {
+      width: 18px;
+      color: var(--accent);
+    }
+    .profile-card .badge {
+      align-self: flex-start;
+      margin-top: 6px;
+    }
+    .profile-grid-wrapper {
+      max-height: 700px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+
+    /* team section */
+    .team-container {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      margin-top: 20px;
+    }
+    .team-block {
+      background: var(--bg-card);
+      border-radius: 24px;
+      padding: 20px 24px;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow);
+    }
+    .team-block h3 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.4rem;
+      margin-bottom: 14px;
+      color: var(--accent);
+    }
+    .team-block h3 i {
+      font-size: 1.2rem;
+    }
+    .team-member {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 4px;
+      border-bottom: 1px solid var(--border-light);
+      flex-wrap: wrap;
+    }
+    .team-member:last-child { border-bottom: none; }
+    .team-member .member-name { font-weight: 500; }
+    .team-member .member-role { color: var(--text-secondary); font-size: 0.9rem; }
+    .team-member .member-status { font-size: 0.8rem; }
+
+    /* attendance history timeline */
+    .attendance-history {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .attendance-day {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+    }
+    .attendance-day.present { background: #5b9f6b; color: white; }
+    .attendance-day.absent { background: #d97a7a; color: white; }
+    .attendance-day.holiday { background: #b0b8c5; color: white; }
+    body.dark .attendance-day.present { background: #2e7d4a; }
+    body.dark .attendance-day.absent { background: #8f3e3e; }
+    body.dark .attendance-day.holiday { background: #3d4658; }
+
+    .history-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .history-card {
+      background: var(--bg-card);
+      padding: 14px 18px;
+      border-radius: 18px;
+      border: 1px solid var(--border-light);
+    }
+    .history-card .emp-name { font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h2><i class="fas fa-briefcase"></i> <span>Empower</span></h2>
+    <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon"></i> <span>Mode</span></button>
+  </div>
+
+  <button onclick="showSection('home')"><i class="fas fa-chart-pie"></i> <span>Dashboard</span></button>
+  <button onclick="showSection('allemployees')"><i class="fas fa-users"></i> <span>All Employees</span></button>
+  <button onclick="showSection('teams')"><i class="fas fa-people-arrows"></i> <span>Teams</span></button>
+  <button onclick="showSection('attendance')"><i class="fas fa-calendar-check"></i> <span>Attendance</span></button>
+  <button onclick="showSection('leave')"><i class="fas fa-plane-departure"></i> <span>Leave</span></button>
+  <button onclick="showSection('payroll')"><i class="fas fa-wallet"></i> <span>Payroll</span></button>
+  <button onclick="showSection('tasks')"><i class="fas fa-tasks"></i> <span>Tasks</span></button>
+  <button onclick="showSection('performance')"><i class="fas fa-star"></i> <span>Performance</span></button>
+  <button onclick="showSection('notifications')"><i class="fas fa-bell"></i> <span>Notifications</span></button>
+  <button onclick="showSection('documents')"><i class="fas fa-folder-open"></i> <span>Documents</span></button>
+  <button onclick="showSection('training')"><i class="fas fa-graduation-cap"></i> <span>Training</span></button>
+  <button onclick="showSection('messages')"><i class="fas fa-envelope"></i> <span>Messages</span></button>
+  <button onclick="showSection('settings')"><i class="fas fa-sliders-h"></i> <span>Settings</span></button>
+  <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></button>
+</div>
+
+<div class="main">
+
+  <!-- HOME / DASHBOARD -->
+  <div id="home" class="section">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+      <h1><i class="fas fa-home"></i> Dashboard</h1>
+      <span style="background: var(--bg-card); padding: 8px 24px; border-radius: 40px; border: 1px solid var(--border-light); font-weight: 500;">
+        <i class="fas fa-calendar-alt"></i> 18 June 2026
+      </span>
+    </div>
+    <div class="card-grid">
+      <div class="stat-card"><h3><i class="fas fa-user-friends"></i> Employees</h3><div class="value">50</div></div>
+      <div class="stat-card"><h3><i class="fas fa-check-circle"></i> Present</h3><div class="value">45</div></div>
+      <div class="stat-card"><h3><i class="fas fa-clock"></i> Pending Leave</h3><div class="value">3</div></div>
+      <div class="stat-card"><h3><i class="fas fa-trophy"></i> Performance</h3><div class="value">4.8 ★</div></div>
+    </div>
+
+    <div class="table-wrap">
+      <h3 style="padding: 16px 24px 4px 24px; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+        <i class="fas fa-address-card" style="color: var(--accent);"></i> All Employees (50)
+      </h3>
+      <div class="scrollable-table">
+        <table>
+          <thead><tr><th>ID</th><th>Name</th><th>Department</th><th>Team</th><th>Manager</th><th>Status</th></tr></thead>
+          <tbody id="employeeTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALL EMPLOYEES (profile cards) -->
+  <div id="allemployees" class="section">
+    <h1><i class="fas fa-users"></i> All Employees</h1>
+    <p class="sub-text">Browse detailed profiles of all 50 team members with manager, team & salary</p>
+    <div class="profile-grid-wrapper">
+      <div class="profile-grid" id="employeeProfileGrid"></div>
+    </div>
+  </div>
+
+  <!-- TEAMS (teamwise view) -->
+  <div id="teams" class="section">
+    <h1><i class="fas fa-people-arrows"></i> Teams</h1>
+    <p class="sub-text">Every 5 members form a team with a designated manager</p>
+    <div class="team-container" id="teamContainer"></div>
+  </div>
+
+  <!-- ATTENDANCE (individual history) -->
+  <div id="attendance" class="section">
+    <h1><i class="fas fa-fingerprint"></i> Attendance & History</h1>
+    <div class="flex-row">
+      <button class="btn-primary" onclick="markAttendance()"><i class="fas fa-check"></i> Mark Present</button>
+      <span id="status" style="font-weight: 500; color: var(--accent);"></span>
+    </div>
+    <div class="history-grid" id="attendanceHistoryGrid"></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Employee</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody id="attendanceTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- LEAVE (individual) -->
+  <div id="leave" class="section">
+    <h1><i class="fas fa-calendar-plus"></i> Leave Management</h1>
+    <div class="settings-card">
+      <label><strong>Reason</strong></label>
+      <textarea rows="3" placeholder="Enter leave reason..." id="leaveReason"></textarea>
+      <div style="margin-top: 16px;">
+        <button class="btn-primary" onclick="applyLeave()"><i class="fas fa-paper-plane"></i> Apply Leave</button>
+        <span id="leaveMsg" style="margin-left: 18px; color: var(--accent);"></span>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table><thead><tr><th>Employee</th><th>Leave Type</th><th>Balance</th></tr></thead>
+        <tbody id="leaveTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PAYROLL (individual) -->
+  <div id="payroll" class="section">
+    <h1><i class="fas fa-coins"></i> Payroll</h1>
+    <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(170px,1fr));">
+      <div class="stat-card"><h3>Monthly Salary</h3><div class="value">₹25,000</div></div>
+      <div class="stat-card"><h3>Bonus</h3><div class="value">₹2,000</div></div>
+      <div class="stat-card"><h3>Deductions</h3><div class="value">₹1,200</div></div>
+      <div class="stat-card"><h3>Net Pay</h3><div class="value">₹25,800</div></div>
+    </div>
+    <div class="table-wrap">
+      <table><thead><tr><th>Employee</th><th>Position</th><th>Team</th><th>Salary (₹)</th><th>Bonus</th><th>Net Pay</th></tr></thead>
+        <tbody id="payrollTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TASKS -->
+  <div id="tasks" class="section">
+    <h1><i class="fas fa-list-check"></i> Tasks</h1>
+    <ul style="list-style: none; background: var(--bg-card); padding: 24px; border-radius: 22px; border:1px solid var(--border-light);">
+      <li style="padding: 12px 0; border-bottom:1px solid var(--border-light); display: flex; align-items: center; gap: 12px;"><i class="fas fa-check-circle" style="color:var(--accent);"></i> Update Employee Data</li>
+      <li style="padding: 12px 0; border-bottom:1px solid var(--border-light); display: flex; align-items: center; gap: 12px;"><i class="fas fa-check-circle" style="color:var(--accent);"></i> Check Attendance Report</li>
+      <li style="padding: 12px 0; display: flex; align-items: center; gap: 12px;"><i class="fas fa-check-circle" style="color:var(--accent);"></i> Complete Monthly Report</li>
+    </ul>
+  </div>
+
+  <!-- PERFORMANCE -->
+  <div id="performance" class="section">
+    <h1><i class="fas fa-chart-line"></i> Performance</h1>
+    <div class="stat-card" style="max-width: 320px;"><h3>Rating</h3><div class="value">4.8 / 5.0</div><span style="color: var(--text-secondary); font-weight: 500;">Excellent</span></div>
+    <div style="margin-top: 20px; background: var(--bg-card); padding: 18px 24px; border-radius: 18px; border:1px solid var(--border-light);">
+      <i class="fas fa-quote-left" style="color: var(--accent); opacity: 0.7;"></i> Outstanding contribution, strong leadership.
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div id="notifications" class="section">
+    <h1><i class="fas fa-bell"></i> Notifications</h1>
+    <div class="notification-item"><i class="fas fa-calendar-day" style="color: var(--accent);"></i> Meeting at 3 PM (Conference Room)</div>
+    <div class="notification-item"><i class="fas fa-check-circle" style="color: var(--accent);"></i> Salary credited successfully for June.</div>
+    <div class="notification-item"><i class="fas fa-user-plus" style="color: var(--accent);"></i> New employee onboarded: Priya Patel</div>
+  </div>
+
+  <!-- DOCUMENTS -->
+  <div id="documents" class="section">
+    <h1><i class="fas fa-folder"></i> Documents</h1>
+    <div class="settings-card">
+      <p><i class="fas fa-upload"></i> Upload document</p>
+      <input type="file" style="padding: 12px; background: var(--bg-body);">
+    </div>
+  </div>
+
+  <!-- TRAINING -->
+  <div id="training" class="section">
+    <h1><i class="fas fa-graduation-cap"></i> Training</h1>
+    <ul style="list-style: none; background: var(--bg-card); padding: 24px; border-radius: 22px; border:1px solid var(--border-light);">
+      <li style="padding: 10px 0; display: flex; align-items: center; gap: 12px;"><i class="fas fa-code"></i> HTML & CSS <span style="margin-left: auto; background: var(--badge-bg); padding: 2px 14px; border-radius: 40px; font-size: 0.8rem;">80%</span></li>
+      <li style="padding: 10px 0; display: flex; align-items: center; gap: 12px; border-top:1px solid var(--border-light);"><i class="fas fa-code"></i> JavaScript <span style="margin-left: auto; background: var(--badge-bg); padding: 2px 14px; border-radius: 40px; font-size: 0.8rem;">45%</span></li>
+      <li style="padding: 10px 0; display: flex; align-items: center; gap: 12px; border-top:1px solid var(--border-light);"><i class="fas fa-database"></i> SQL Basics <span style="margin-left: auto; background: var(--badge-bg); padding: 2px 14px; border-radius: 40px; font-size: 0.8rem;">20%</span></li>
+    </ul>
+  </div>
+
+  <!-- MESSAGES -->
+  <div id="messages" class="section">
+    <h1><i class="fas fa-comment-dots"></i> Messages</h1>
+    <div class="settings-card">
+      <textarea rows="3" placeholder="Type your message..."></textarea>
+      <button class="btn-primary" style="margin-top: 16px;"><i class="fas fa-paper-plane"></i> Send</button>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div id="settings" class="section">
+    <h1><i class="fas fa-cog"></i> Settings</h1>
+    <div class="settings-card">
+      <button class="btn-primary" onclick="alert('Password change request sent.')"><i class="fas fa-key"></i> Change Password</button>
+      <hr style="margin: 24px 0; border-color: var(--border-light);">
+      <button class="btn-outline" onclick="toggleTheme()"><i class="fas fa-moon"></i> Toggle Dark/Light</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ----- generate 50 employees with managers, teams, salaries -----
+  function generateEmployees() {
+    const firstNames = ['Ayesha', 'Rahul', 'Priya', 'Arjun', 'Neha', 'Vikram', 'Sneha', 'Karan', 'Pooja', 'Ravi', 
+                        'Anjali', 'Deepak', 'Kavya', 'Suresh', 'Meera', 'Raj', 'Swati', 'Amit', 'Nisha', 'Gaurav',
+                        'Divya', 'Manoj', 'Shreya', 'Rakesh', 'Tanvi', 'Akash', 'Isha', 'Sanjay', 'Jyoti', 'Vivek',
+                        'Lata', 'Narendra', 'Kirti', 'Alok', 'Ritu', 'Mukesh', 'Shilpa', 'Rohit', 'Anita', 'Rajan',
+                        'Sonal', 'Dinesh', 'Sapna', 'Ramesh', 'Preeti', 'Pankaj', 'Sunita', 'Nitin', 'Usha', 'Sagar'];
+    const lastNames = ['Sharma', 'Patel', 'Singh', 'Reddy', 'Kumar', 'Joshi', 'Rao', 'Mehta', 'Agarwal', 'Gupta',
+                       'Verma', 'Malik', 'Chopra', 'Kapoor', 'Bajaj', 'Nair', 'Menon', 'Pillai', 'Iyer', 'Desai'];
+    const departments = ['CIOT', 'Development', 'Design', 'Operations', 'Marketing', 'Sales', 'HR', 'Finance', 'Product', 'QA'];
+    const statuses = ['Active', 'Active', 'Active', 'Active', 'On Leave', 'Active', 'Active', 'Active', 'Active', 'Active'];
+    const emails = ['@empower.com', '@empower.com', '@empower.com', '@empower.com', '@empower.com'];
+    const roles = ['Developer', 'Manager', 'Designer', 'Analyst', 'Lead', 'Associate', 'Director', 'Coordinator', 'Specialist', 'Consultant'];
+    const salaries = [45000, 60000, 55000, 70000, 48000, 52000, 80000, 42000, 58000, 65000];
+    // 10 team names (each team has a manager)
+    const teamNames = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta', 'Iota', 'Kappa'];
+    const managerNames = ['Rahul Sharma', 'Priya Patel', 'Arjun Singh', 'Neha Reddy', 'Vikram Kumar', 'Sneha Joshi', 'Karan Rao', 'Pooja Mehta', 'Ravi Agarwal', 'Anjali Gupta'];
+
+    const employees = [];
+    for (let i = 0; i < 50; i++) {
+      const firstName = firstNames[i % firstNames.length];
+      const lastName = lastNames[i % lastNames.length];
+      const dept = departments[i % departments.length];
+      const status = statuses[i % statuses.length];
+      const id = `24${String(100 + i).padStart(3, '0')}-${dept}-${String(100 + i).padStart(3, '0')}`;
+      const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${emails[i % emails.length]}`;
+      const role = roles[i % roles.length];
+      const salary = salaries[i % salaries.length];
+      // team: group of 5
+      const teamIdx = Math.floor(i / 5) % teamNames.length;
+      const team = teamNames[teamIdx];
+      const manager = managerNames[teamIdx];
+      employees.push({ id, name: `${firstName} ${lastName}`, department: dept, status, email, role, salary, team, manager });
+    }
+    return employees;
+  }
+
+  const employees = generateEmployees();
+
+  // ----- render employee table (dashboard) -----
+  function renderEmployeeTable() {
+    const tbody = document.getElementById('employeeTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = employees.map(emp => `
+      <tr>
+        <td>${emp.id}</td>
+        <td>${emp.name}</td>
+        <td>${emp.department}</td>
+        <td><span class="badge team-badge">${emp.team}</span></td>
+        <td><span class="badge manager-badge">${emp.manager}</span></td>
+        <td><span class="badge ${emp.status === 'Active' ? '' : 'inactive'}">${emp.status}</span></td>
+      </tr>
+    `).join('');
+  }
+
+  // ----- render profile cards (All Employees) -----
+  function renderProfileCards() {
+    const grid = document.getElementById('employeeProfileGrid');
+    if (!grid) return;
+    grid.innerHTML = employees.map(emp => `
+      <div class="profile-card">
+        <div class="name">${emp.name} <span style="font-size:0.8rem; font-weight:400; color:var(--text-secondary);">(${emp.role})</span></div>
+        <div class="detail"><i class="fas fa-id-badge"></i> ${emp.id}</div>
+        <div class="detail"><i class="fas fa-building"></i> ${emp.department}</div>
+        <div class="detail"><i class="fas fa-users"></i> Team: ${emp.team}</div>
+        <div class="detail"><i class="fas fa-user-tie"></i> Manager: ${emp.manager}</div>
+        <div class="detail"><i class="fas fa-rupee-sign"></i> Salary: ₹${emp.salary.toLocaleString()}</div>
+        <span class="badge ${emp.status === 'Active' ? '' : 'inactive'}">${emp.status}</span>
+      </div>
+    `).join('');
+  }
+
+  // ----- render Teams (teamwise) -----
+  function renderTeams() {
+    const container = document.getElementById('teamContainer');
+    if (!container) return;
+    const teams = {};
+    employees.forEach(emp => {
+      if (!teams[emp.team]) teams[emp.team] = [];
+      teams[emp.team].push(emp);
+    });
+    container.innerHTML = Object.keys(teams).map(teamName => {
+      const members = teams[teamName];
+      const manager = members[0]?.manager || '—';
+      return `
+        <div class="team-block">
+          <h3><i class="fas fa-flag"></i> Team ${teamName} <span style="font-size:0.9rem; font-weight:400; color:var(--text-secondary);">(Manager: ${manager})</span></h3>
+          ${members.map(m => `
+            <div class="team-member">
+              <span class="member-name">${m.name} <span class="member-role">(${m.role})</span></span>
+              <span class="member-status"><span class="badge ${m.status === 'Active' ? '' : 'inactive'}">${m.status}</span></span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ----- attendance history (last 10 days for each employee) -----
+  function generateAttendanceHistory() {
+    const history = [];
+    const statuses = ['Present', 'Present', 'Present', 'Absent', 'Present', 'Present', 'Absent', 'Present', 'Present', 'Present'];
+    employees.slice(0, 15).forEach(emp => {
+      const days = [];
+      for (let d = 0; d < 10; d++) {
+        const date = new Date(2026, 5, 18 - d);
+        const status = statuses[(d + emp.name.length) % statuses.length];
+        days.push({ date: date.toLocaleDateString(), status });
+      }
+      history.push({ name: emp.name, team: emp.team, days });
+    });
+    return history;
+  }
+  const attendanceHistory = generateAttendanceHistory();
+
+  function renderAttendanceHistory() {
+    const grid = document.getElementById('attendanceHistoryGrid');
+    if (!grid) return;
+    grid.innerHTML = attendanceHistory.map(emp => `
+      <div class="history-card">
+        <div class="emp-name">${emp.name} <span style="font-size:0.8rem; color:var(--text-secondary);">(${emp.team})</span></div>
+        <div class="attendance-history">
+          ${emp.days.map(day => `
+            <div class="attendance-day ${day.status === 'Present' ? 'present' : 'absent'}">${day.date.slice(0,5)}</div>
+          `).join('')}
+        </div>
+        <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:4px;">Last 10 days</div>
+      </div>
+    `).join('');
+  }
+
+  // ----- attendance table (recent) -----
+  function renderAttendance() {
+    const tbody = document.getElementById('attendanceTableBody');
+    if (!tbody) return;
+    const statuses = ['Present', 'Present', 'Present', 'Absent', 'Present', 'Present', 'Present', 'Present', 'Present', 'Present'];
+    tbody.innerHTML = employees.slice(0, 15).map((emp, idx) => `
+      <tr>
+        <td>${emp.name}</td>
+        <td>${new Date(2026, 5, 18 - idx).toLocaleDateString()}</td>
+        <td><span class="badge ${statuses[idx % statuses.length] === 'Present' ? '' : 'inactive'}">${statuses[idx % statuses.length]}</span></td>
+      </tr>
+    `).join('');
+  }
+
+  // ----- leave -----
+  function renderLeave() {
+    const tbody = document.getElementById('leaveTableBody');
+    if (!tbody) return;
+    const types = ['Casual', 'Sick', 'Casual', 'Sick', 'Casual', 'Sick', 'Casual', 'Sick', 'Casual', 'Sick'];
+    const balances = ['8 days', '5 days', '7 days', '4 days', '6 days', '3 days', '9 days', '5 days', '8 days', '6 days'];
+    tbody.innerHTML = employees.slice(0, 10).map((emp, idx) => `
+      <tr>
+        <td>${emp.name}</td>
+        <td>${types[idx % types.length]}</td>
+        <td>${balances[idx % balances.length]}</td>
+      </tr>
+    `).join('');
+  }
+
+  // ----- payroll -----
+  function renderPayroll() {
+    const tbody = document.getElementById('payrollTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = employees.map(emp => {
+      const bonus = Math.round(emp.salary * 0.08);
+      const net = emp.salary + bonus - 1200;
+      return `
+        <tr>
+          <td>${emp.name}</td>
+          <td>${emp.role}</td>
+          <td><span class="badge team-badge">${emp.team}</span></td>
+          <td>₹${emp.salary.toLocaleString()}</td>
+          <td>₹${bonus.toLocaleString()}</td>
+          <td>₹${net.toLocaleString()}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // ----- show section -----
+  function showSection(sectionId) {
+    document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
+    const target = document.getElementById(sectionId);
+    if (target) target.style.display = 'block';
+  }
+
+  // ----- attendance mark -----
+  function markAttendance() {
+    document.getElementById("status").innerHTML = '<i class="fas fa-check-circle"></i> Attendance marked successfully';
+  }
+
+  // ----- apply leave -----
+  function applyLeave() {
+    const reason = document.getElementById('leaveReason')?.value || 'No reason provided';
+    document.getElementById('leaveMsg').innerHTML = '<i class="fas fa-check"></i> Leave applied for: ' + reason.substring(0, 30) + '...';
+  }
+
+  // ----- logout -----
+  function logout() { alert('Logged out successfully'); }
+
+  // ----- theme toggle -----
+  function toggleTheme() {
+    document.body.classList.toggle('dark');
+    const icon = document.querySelector('.theme-toggle i');
+    const span = document.querySelector('.theme-toggle span');
+    if (document.body.classList.contains('dark')) {
+      icon.className = 'fas fa-sun';
+      span.innerText = 'Light';
+    } else {
+      icon.className = 'fas fa-moon';
+      span.innerText = 'Mode';
+    }
+  }
+
+  // auto dark mode
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.body.classList.add('dark');
+    const icon = document.querySelector('.theme-toggle i');
+    const span = document.querySelector('.theme-toggle span');
+    if (icon) { icon.className = 'fas fa-sun'; span.innerText = 'Light'; }
+  }
+
+  // init all
+  document.addEventListener('DOMContentLoaded', () => {
+    renderEmployeeTable();
+    renderProfileCards();
+    renderTeams();
+    renderAttendanceHistory();
+    renderAttendance();
+    renderLeave();
+    renderPayroll();
+  });
+</script>
+
+</body>
+</html>
