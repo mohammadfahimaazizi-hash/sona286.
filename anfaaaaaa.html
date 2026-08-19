@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ITP · Employee Portal</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    body {
+      display: flex;
+      background: #f4f6f9;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      height: 100vh;
+      background: #0d1b2a;
+      color: #e2eaf5;
+      padding: 24px 16px;
+      position: sticky;
+      top: 0;
+      overflow-y: auto;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+      z-index: 100;
+      box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+    }
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #5b9aff;
+      flex-shrink: 0;
+    }
+    .sidebar h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: white;
+      letter-spacing: -0.3px;
+      margin: 0;
+    }
+    .sidebar h2 i { color: #5b9aff; margin-right: 8px; }
+    .sidebar-user {
+      font-size: 0.8rem;
+      color: #b8c9e0;
+      margin-top: 2px;
+    }
+    .sidebar ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .sidebar ul li {
+      padding: 10px 14px;
+      border-radius: 10px;
+      transition: background 0.2s;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 500;
+      font-size: 15px;
+      color: #b8c9e0;
+    }
+    .sidebar ul li i {
+      width: 22px;
+      color: #6d8fc6;
+      font-size: 1.1rem;
+    }
+    .sidebar ul li:hover {
+      background: rgba(255,255,255,0.07);
+      color: white;
+    }
+    .sidebar ul li:hover i { color: white; }
+    .sidebar ul li.active {
+      background: rgba(255,255,255,0.10);
+      color: white;
+    }
+    .sidebar ul li.active i { color: #7ba9ff; }
+    .sidebar ul li.logout {
+      margin-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 18px;
+      color: #f9b4b4;
+    }
+    .sidebar ul li.logout i { color: #f68181; }
+    .sidebar ul li.logout:hover {
+      background: rgba(255,70,70,0.12);
+      color: #ffc9c9;
+    }
+
+    .main {
+      flex: 1;
+      padding: 28px 36px;
+      max-width: calc(100% - 260px);
+      overflow-x: hidden;
+    }
+
+    .header {
+      background: white;
+      padding: 22px 28px;
+      border-radius: 18px;
+      margin-bottom: 28px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border: 1px solid #eef2f7;
+    }
+    .header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #0b1a2b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header h1 i { color: #1d4ed8; }
+    .header p {
+      color: #5a6e87;
+      margin-top: 6px;
+      font-size: 1rem;
+    }
+
+    .feature-detail {
+      display: none;
+      animation: fadeUp 0.3s ease;
+    }
+    .feature-detail.active { display: block; }
+    @keyframes fadeUp {
+      0% { opacity: 0.2; transform: translateY(8px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .detail-card {
+      background: white;
+      border-radius: 18px;
+      padding: 24px 28px;
+      border: 1px solid #eef2f7;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      margin-bottom: 24px;
+    }
+    .detail-card h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #0b1a2b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .detail-card h2 i { color: #1d4ed8; }
+    .detail-card p {
+      color: #5a6e87;
+      line-height: 1.6;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .card {
+      background: white;
+      padding: 22px 24px;
+      border-radius: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border: 1px solid #eef2f7;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,20,40,0.06);
+    }
+    .card h3 {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #5a6e87;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card h3 i { color: #1d4ed8; font-size: 1rem; }
+    .card p {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-top: 8px;
+      color: #0b1a2b;
+      letter-spacing: -0.5px;
+    }
+
+    .table-wrap {
+      background: white;
+      border-radius: 18px;
+      border: 1px solid #eef2f7;
+      overflow-x: auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      margin-top: 16px;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      min-width: 500px;
+    }
+    table th {
+      background: #f8fafc;
+      color: #1e2f44;
+      font-weight: 600;
+      padding: 14px 18px;
+      text-align: left;
+      border-bottom: 2px solid #eef2f7;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+    table td {
+      padding: 12px 18px;
+      border-bottom: 1px solid #f0f4fa;
+      color: #1e2f44;
+      vertical-align: middle;
+    }
+    table tr:last-child td { border-bottom: none; }
+    .clickable-name {
+      cursor: pointer;
+      color: #1d4ed8;
+      font-weight: 600;
+    }
+    .clickable-name:hover {
+      text-decoration: underline;
+    }
+    .avatar-thumb {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #eef2f7;
+    }
+
+    .badge {
+      background: #e0edff;
+      color: #1a3e7a;
+      padding: 4px 14px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge.pending {
+      background: #fff3e0;
+      color: #9e5f1a;
+    }
+    .badge.approved {
+      background: #e6f7e6;
+      color: #1a6e2e;
+    }
+    .badge.active {
+      background: #d9f0e1;
+      color: #0b4f2e;
+    }
+    .badge.rejected {
+      background: #ffe6e6;
+      color: #a11f1f;
+    }
+    .badge.leave { background: #fce4ec; color: #b71c1c; }
+    .badge.present { background: #e6f7e6; color: #1a6e2e; }
+    .badge.absent { background: #ffe6e6; color: #a11f1f; }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 6px 16px;
+      border: none;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #1d4ed8;
+      color: white;
+    }
+    .btn-primary:hover { background: #1a3faf; transform: scale(1.02); }
+    .btn-success {
+      background: #1e7e34;
+      color: white;
+    }
+    .btn-success:hover { background: #16632a; }
+    .btn-danger {
+      background: #c62828;
+      color: white;
+    }
+    .btn-danger:hover { background: #a11f1f; }
+    .btn-outline {
+      background: transparent;
+      color: #1e2f44;
+      border: 1.5px solid #dde3ec;
+    }
+    .btn-outline:hover { background: #f0f4fa; border-color: #1d4ed8; }
+    .btn-sm { padding: 4px 12px; font-size: 0.7rem; }
+    .text-muted { color: #5a6e87; font-size: 0.8rem; }
+
+    .menu-toggle {
+      display: none;
+      background: #0d1b2a;
+      color: white;
+      border: none;
+      font-size: 1.6rem;
+      padding: 8px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 80px;
+        padding: 16px 10px;
+      }
+      .sidebar-header { flex-direction: column; gap: 8px; }
+      .sidebar-avatar { width: 40px; height: 40px; }
+      .sidebar h2 { font-size: 1.2rem; }
+      .sidebar h2 span { display: none; }
+      .sidebar-user { display: none; }
+      .sidebar ul li span { display: none; }
+      .sidebar ul li { justify-content: center; padding: 14px 0; font-size: 1.2rem; }
+      .sidebar ul li i { width: auto; font-size: 1.3rem; }
+      .main { max-width: calc(100% - 80px); padding: 20px; }
+      .menu-toggle { display: inline-block; }
+    }
+    @media (max-width: 600px) {
+      .sidebar { width: 60px; padding: 12px 6px; }
+      .sidebar-avatar { width: 32px; height: 32px; }
+      .sidebar h2 { font-size: 1rem; }
+      .sidebar ul li { padding: 12px 0; }
+      .main { max-width: calc(100% - 60px); padding: 14px; }
+      .header h1 { font-size: 1.3rem; }
+      .card p { font-size: 1.6rem; }
+      .cards { grid-template-columns: 1fr 1fr; }
+      .btn-group { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 400px) {
+      .cards { grid-template-columns: 1fr; }
+      .sidebar { width: 50px; padding: 8px 4px; }
+      .sidebar-avatar { width: 28px; height: 28px; }
+      .main { max-width: calc(100% - 50px); padding: 10px; }
+      .header { padding: 16px; }
+      .header h1 { font-size: 1.1rem; }
+      table { font-size: 0.75rem; min-width: 400px; }
+      table th, table td { padding: 8px 10px; }
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .feature-grid .feat-item {
+      background: white;
+      padding: 16px 20px;
+      border-radius: 14px;
+      border: 1px solid #eef2f7;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .feature-grid .feat-item:hover {
+      background: #f8faff;
+      border-color: #1d4ed8;
+      transform: translateY(-2px);
+    }
+    .feature-grid .feat-item .fi-icon {
+      width: 40px;
+      height: 40px;
+      background: #e8f0fe;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1d4ed8;
+      font-size: 1.2rem;
+    }
+    .feature-grid .feat-item .fi-text {
+      font-weight: 500;
+      color: #0b1a2b;
+    }
+    .logbook-entry {
+      background: #f9fbfd;
+      border-radius: 14px;
+      padding: 16px 20px;
+      border-left: 4px solid #1d4ed8;
+      margin: 10px 0;
+    }
+    .logbook-entry p { margin: 6px 0; }
+    .msg-item {
+      padding: 12px 16px;
+      background: #f8fafc;
+      border-radius: 12px;
+      border-left: 4px solid #1d4ed8;
+      margin-bottom: 10px;
+    }
+    .profile-card {
+      background: #f9fbfd;
+      border-radius: 16px;
+      padding: 20px 24px;
+      border: 1px solid #eef2f7;
+      margin-top: 12px;
+    }
+    .profile-card p { margin: 8px 0; }
+    .profile-card .label {
+      font-weight: 600;
+      color: #1e2f44;
+      width: 140px;
+      display: inline-block;
+    }
+    .profile-avatar-large {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #eef2f7;
+    }
+    .file-list {
+      background: white;
+      border-radius: 12px;
+      padding: 12px 16px;
+      border: 1px solid #eef2f7;
+      margin-top: 8px;
+    }
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f4fa;
+    }
+    .file-item:last-child { border-bottom: none; }
+    .file-item i { color: #1d4ed8; }
+    .feedback-box {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 12px;
+      border: 1px solid #eef2f7;
+    }
+    .feedback-box textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #dde3ec;
+      border-radius: 10px;
+      resize: vertical;
+      font-size: 0.95rem;
+      margin-top: 8px;
+      min-height: 80px;
+    }
+    .feedback-box textarea:focus {
+      outline: none;
+      border-color: #1d4ed8;
+    }
+    .file-upload-area {
+      border: 2px dashed #dde3ec;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 12px;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+    .file-upload-area:hover {
+      border-color: #1d4ed8;
+      background: #f8faff;
+    }
+    .file-upload-area input[type="file"] {
+      display: none;
+    }
+    .file-upload-area label {
+      cursor: pointer;
+      color: #1d4ed8;
+      font-weight: 600;
+    }
+    #photoInput {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <img id="sidebarAvatar" src="https://ui-avatars.com/api/?name=Dr.+Ravi+Kumar&size=100&background=1d4ed8&color=fff&bold=true&rounded=true&font-size=0.5" alt="Dr. Ravi Kumar" class="sidebar-avatar" />
+      <div>
+        <h2><i class="fas fa-briefcase"></i><span>ITP Portal</span></h2>
+        <div class="sidebar-user">Dr. Ravi Kumar · Trainer</div>
+      </div>
+    </div>
+    <ul>
+      <li data-section="dashboard"><i class="fas fa-chart-pie"></i> <span>Dashboard</span></li>
+      <li data-section="profile"><i class="fas fa-user-circle"></i> <span>My Profile</span></li>
+      <li data-section="students"><i class="fas fa-user-graduate"></i> <span>Students</span></li>
+      <li class="active" data-section="logbook"><i class="fas fa-book-open"></i> <span>Logbook Review</span></li>
+      <li data-section="attendance"><i class="fas fa-calendar-check"></i> <span>Attendance</span></li>
+      <li data-section="messages"><i class="fas fa-envelope"></i> <span>Messages</span></li>
+      <li data-section="schedule"><i class="fas fa-clock"></i> <span>Task Schedule</span></li>
+      <li data-section="performance"><i class="fas fa-star"></i> <span>Performance</span></li>
+      <li data-section="documents"><i class="fas fa-folder-open"></i> <span>Documents</span></li>
+      <li data-section="reports"><i class="fas fa-file-alt"></i> <span>Reports</span></li>
+      <li data-section="notifications"><i class="fas fa-bell"></i> <span>Notifications</span></li>
+      <li data-section="settings"><i class="fas fa-sliders-h"></i> <span>Settings</span></li>
+      <li class="logout" data-section="logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></li>
+    </ul>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="main">
+    <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+    <!-- ===== DASHBOARD ===== -->
+    <div id="section-dashboard" class="feature-detail">
+      <div class="header"><h1><i class="fas fa-chart-pie"></i> Dashboard</h1><p>Welcome, Dr. Ravi Kumar. Quick overview.</p></div>
+      <div class="cards">
+        <div class="card"><h3><i class="fas fa-users"></i> Students</h3><p>60</p></div>
+        <div class="card"><h3><i class="fas fa-clock"></i> Pending Logbooks</h3><p id="dashPending">6</p></div>
+        <div class="card"><h3><i class="fas fa-check-circle"></i> Approved</h3><p id="dashApproved">14</p></div>
+        <div class="card"><h3><i class="fas fa-calendar-alt"></i> Upcoming</h3><p>5</p></div>
+      </div>
+      <div class="detail-card"><h2><i class="fas fa-th-large"></i> Quick Access</h2>
+        <div class="feature-grid">
+          <div class="feat-item" onclick="navigateTo('logbook')"><div class="fi-icon"><i class="fas fa-book-open"></i></div><div class="fi-text">Logbook Review</div></div>
+          <div class="feat-item" onclick="navigateTo('attendance')"><div class="fi-icon"><i class="fas fa-calendar-check"></i></div><div class="fi-text">Attendance</div></div>
+          <div class="feat-item" onclick="navigateTo('messages')"><div class="fi-icon"><i class="fas fa-envelope"></i></div><div class="fi-text">Messages</div></div>
+          <div class="feat-item" onclick="navigateTo('schedule')"><div class="fi-icon"><i class="fas fa-clock"></i></div><div class="fi-text">Task Schedule</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MY PROFILE with Changeable Photo ===== -->
+    <div id="section-profile" class="feature-detail">
+      <div class="detail-card">
+        <h2><i class="fas fa-user-circle"></i> My Profile</h2>
+        <div style="display:flex; align-items:center; gap:24px; margin-bottom:16px; flex-wrap:wrap;">
+          <div style="position:relative;">
+            <img id="profileAvatar" src="https://ui-avatars.com/api/?name=Dr.+Ravi+Kumar&size=100&background=1d4ed8&color=fff&bold=true&rounded=true&font-size=0.5" alt="Dr. Ravi Kumar" class="profile-avatar-large" />
+            <button onclick="document.getElementById('photoInput').click()" style="position:absolute; bottom:0; right:0; background:#1d4ed8; color:white; border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; justify-content:center; border:2px solid white;">
+              <i class="fas fa-camera"></i>
+            </button>
+            <input type="file" id="photoInput" accept="image/*" onchange="changeProfilePhoto(event)" />
+          </div>
+          <div>
+            <h3 style="margin:0; color:#0b1a2b;">Dr. Ravi Kumar</h3>
+            <p style="color:#5a6e87; margin:4px 0 0 0;">Senior Trainer / Mentor</p>
+          </div>
+        </div>
+        <p><strong>Name:</strong> Dr. Ravi Kumar</p>
+        <p><strong>Designation:</strong> Senior Trainer / Mentor</p>
+        <p><strong>Department:</strong> Industrial Training</p>
+        <p><strong>Email:</strong> ravi.kumar@itp.edu</p>
+        <p><strong>Phone:</strong> +91 98765 43210</p>
+        <p><strong>Experience:</strong> 12 years</p>
+        <p><strong>Students Mentored:</strong> 120+</p>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="alert('Edit profile functionality')"><i class="fas fa-edit"></i> Edit Profile</button>
+      </div>
+    </div>
+
+    <!-- ===== STUDENTS ===== -->
+    <div id="section-students" class="feature-detail">
+      <div class="header"><h1><i class="fas fa-user-graduate"></i> Students</h1><p>All 60 students with photos.</p></div>
+      <div class="detail-card">
+        <h2><i class="fas fa-list"></i> Student Directory</h2>
+        <div class="table-wrap" style="max-height:480px;">
+          <table>
+            <thead><tr><th>#</th><th>Photo</th><th>Name</th><th>ID</th><th>College</th><th>Branch</th><th>Status</th></tr></thead>
+            <tbody id="studentTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== LOGBOOK REVIEW ===== -->
+    <div id="section-logbook" class="feature-detail active">
+      <div class="header"><h1><i class="fas fa-book-open"></i> Logbook Review</h1><p>Review student entries, provide feedback, and upload supporting files.</p></div>
+      <div class="cards">
+        <div class="card"><h3><i class="fas fa-clock"></i> Pending</h3><p id="pendingCount">6</p></div>
+        <div class="card"><h3><i class="fas fa-check-circle"></i> Approved</h3><p id="approvedCount">14</p></div>
+        <div class="card"><h3><i class="fas fa-times-circle"></i> Rejected</h3><p id="rejectedCount">2</p></div>
+      </div>
+      <div class="detail-card">
+        <h2><i class="fas fa-pen-fancy"></i> Logbook Entries</h2>
+        <div class="table-wrap">
+          <table><thead><tr><th>Student</th><th>Week</th><th>Submitted</th><th>Status</th><th>Files</th><th>Action</th></tr></thead>
+            <tbody id="logbookTableBody"></tbody>
+          </table>
+        </div>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="addNewEntry()"><i class="fas fa-plus"></i> Add Entry</button>
+      </div>
+      <div class="detail-card" id="logbookDetailView" style="display:none;">
+        <h2><i class="fas fa-file-alt"></i> Logbook Entry Review</h2>
+        <div id="logbookDetailContent"></div>
+        <div style="margin-top:16px; display:flex; gap:12px; flex-wrap:wrap;">
+          <button class="btn btn-outline" onclick="closeDetailView()"><i class="fas fa-arrow-left"></i> Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ATTENDANCE ===== -->
+    <div id="section-attendance" class="feature-detail">
+      <div class="header"><h1><i class="fas fa-calendar-check"></i> Attendance</h1><p>Track daily attendance for all 60 students.</p></div>
+      <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+        <div class="card"><h3>Today</h3><p id="presentCount">0/60</p></div>
+        <div class="card"><h3>This Week</h3><p>86%</p></div>
+        <div class="card"><h3>This Month</h3><p>91%</p></div>
+      </div>
+      <div class="detail-card">
+        <h2><i class="fas fa-user-check"></i> Today's Attendance</h2>
+        <div class="table-wrap" style="max-height:480px;">
+          <table>
+            <thead><tr><th>#</th><th>Photo</th><th>Student</th><th>ID</th><th>Branch</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="attendanceTableBody"></tbody>
+          </table>
+        </div>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="markAllPresent()"><i class="fas fa-check-double"></i> Mark All Present</button>
+        <button class="btn btn-outline" style="margin-top:16px; margin-left:8px;" onclick="randomizeAttendance()"><i class="fas fa-random"></i> Randomize</button>
+      </div>
+    </div>
+
+    <!-- ===== MESSAGES ===== -->
+    <div id="section-messages" class="feature-detail">
+      <div class="detail-card">
+        <h2><i class="fas fa-envelope"></i> Messages</h2>
+        <div class="msg-item"><i class="fas fa-user-circle" style="color:#1d4ed8;"></i> <strong>Anjali Devi:</strong> "Sir, I need help with the API assignment." <span class="text-muted">(2h ago)</span></div>
+        <div class="msg-item"><i class="fas fa-user-circle" style="color:#1d4ed8;"></i> <strong>Rahul Kumar:</strong> "Logbook submitted for week 5." <span class="text-muted">(5h ago)</span></div>
+        <div class="msg-item"><i class="fas fa-user-circle" style="color:#1d4ed8;"></i> <strong>Admin:</strong> "Training schedule updated for next week." <span class="text-muted">(1d ago)</span></div>
+        <button class="btn btn-primary" style="margin-top:12px;"><i class="fas fa-pen"></i> Compose</button>
+      </div>
+    </div>
+
+    <!-- ===== TASK SCHEDULE ===== -->
+    <div id="section-schedule" class="feature-detail">
+      <div class="detail-card">
+        <h2><i class="fas fa-clock"></i> Task Schedule</h2>
+        <div class="table-wrap"><table><thead><tr><th>Task</th><th>Assigned To</th><th>Deadline</th><th>Status</th></tr></thead>
+          <tbody><tr><td>Design Homepage</td><td>Rahul Kumar</td><td>2026-06-30</td><td><span class="badge pending">In Progress</span></td></tr>
+          <tr><td>API Integration</td><td>Anjali Devi</td><td>2026-06-28</td><td><span class="badge pending">In Progress</span></td></tr>
+          <tr><td>UI/UX Review</td><td>Vikram Reddy</td><td>2026-06-25</td><td><span class="badge approved">Completed</span></td></tr>
+        </tbody></table></div>
+        <button class="btn btn-primary" style="margin-top:16px;"><i class="fas fa-plus"></i> Assign Task</button>
+      </div>
+    </div>
+
+    <!-- ===== PERFORMANCE ===== -->
+    <div id="section-performance" class="feature-detail">
+      <div class="detail-card">
+        <h2><i class="fas fa-star"></i> Performance</h2>
+        <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+          <div class="card"><h3>Avg Rating</h3><p>4.6 ★</p></div>
+          <div class="card"><h3>Top Performer</h3><p>Anjali</p></div>
+        </div>
+        <div class="table-wrap"><table><thead><tr><th>Student</th><th>Rating</th><th>Feedback</th></tr></thead>
+          <tbody><tr><td>Rahul Kumar</td><td>4.5 ★</td><td>Great progress</td></tr>
+          <tr><td>Anjali Devi</td><td>4.9 ★</td><td>Excellent</td></tr>
+          <tr><td>Vikram Reddy</td><td>3.8 ★</td><td>Needs practice</td></tr>
+        </tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ===== DOCUMENTS ===== -->
+    <div id="section-documents" class="feature-detail">
+      <div class="detail-card">
+        <h2><i class="fas fa-folder-open"></i> Documents</h2>
+        <div class="table-wrap"><table><thead><tr><th>Document</th><th>Uploaded By</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody><tr><td>Training Manual.pdf</td><td>Dr. Ravi</td><td>2026-06-10</td><td><button class="btn btn-outline"><i class="fas fa-download"></i> Download</button></td></tr>
+          <tr><td>Week 1 Material.pptx</td><td>Dr. Ravi</td><td>2026-06-15</td><td><button class="btn btn-outline"><i class="fas fa-download"></i> Download</button></td></tr>
+        </tbody></table></div>
+        <button class="btn btn-primary" style="margin-top:16px;"><i class="fas fa-upload"></i> Upload</button>
+      </div>
+    </div>
+
+    <!-- ===== REPORTS, NOTIFICATIONS, SETTINGS ===== -->
+    <div id="section-reports" class="feature-detail"><div class="detail-card"><h2>Reports</h2><p>Generate reports</p><button class="btn btn-primary">PDF</button></div></div>
+    <div id="section-notifications" class="feature-detail"><div class="detail-card"><h2>Notifications</h2><p>All alerts</p></div></div>
+    <div id="section-settings" class="feature-detail"><div class="detail-card"><h2>Settings</h2><p>Preferences</p></div></div>
+    <div id="section-logout" class="feature-detail"><div class="detail-card"><h2>Logout</h2><button class="btn btn-danger" onclick="logout()">Confirm</button></div></div>
+  </div>
+
+  <script>
+    // ===== EMPLOYEE PROFILE PHOTO MANAGEMENT =====
+    let employeePhoto = "https://ui-avatars.com/api/?name=Dr.+Ravi+Kumar&size=100&background=1d4ed8&color=fff&bold=true&rounded=true&font-size=0.5";
+
+    function changeProfilePhoto(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const imageUrl = e.target.result;
+        employeePhoto = imageUrl;
+        
+        // Update sidebar avatar
+        document.getElementById('sidebarAvatar').src = imageUrl;
+        // Update profile page avatar
+        document.getElementById('profileAvatar').src = imageUrl;
+        
+        alert('Profile photo updated successfully!');
+      };
+      reader.readAsDataURL(file);
+      // Reset input so same file can be re-uploaded
+      event.target.value = '';
+    }
+
+    // ===== STUDENT DATA =====
+    const firstNames = ['Rahul','Anjali','Vikram','Sneha','Arjun','Priya','Kiran','Neha','Amit','Deepak','Suman','Ravi','Pooja','Manoj','Divya','Raj','Nisha','Kumar','Swathi','Venkat','Lakshmi','Ganesh','Saranya','Murali','Padma','Suresh','Jyothi','Prakash','Anitha','Ramesh','Sridevi','Naveen','Sujatha','Mahesh','Vani','Srinivas','Vijaya','Karthik','Madhavi','Chandra','Bhargav','Shilpa','Hari','Sunita','Prasad','Sowmya','Murthy','Lavanya','Nagaraj','Usha','Shankar','Vidya','Krishna','Radha','Sekhar','Sita','Gopal','Meena','Narayan','Nirmala'];
+    const lastNames = ['Kumar','Devi','Reddy','Patel','Singh','Sharma','Rao','Naidu','Gupta','Joshi','Menon','Nair','Pillai','Desai','Shah','Iyer','Mishra','Verma','Dubey','Nayak'];
+    const colleges = ['Gudlavalleru Engg','Andhra Polytechnic','SRKR Engg','VRS & YRN College','Prasad Polytechnic','KITS','GIET','AU College','JNTU','VIT','NIT','IIT'];
+    const branches = ['CSE','IT','ECE','ME','CE','EEE','AI','DS','Aerospace','Biotech','Chemical','Civil'];
+    const statuses = ['Active','Active','Active','On Leave','Active','Active'];
+
+    function getAvatarUrl(name, seed) {
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=100&background=4F8CF7&color=fff&bold=true&rounded=true&font-size=0.5&seed=${seed}`;
+    }
+
+    function generateStudents(count) {
+      const students = [];
+      for (let i = 1; i <= count; i++) {
+        const fn = firstNames[Math.floor(Math.random() * firstNames.length)];
+        const ln = lastNames[Math.floor(Math.random() * lastNames.length)];
+        const name = fn + ' ' + ln;
+        const college = colleges[Math.floor(Math.random() * colleges.length)];
+        const branch = branches[Math.floor(Math.random() * branches.length)];
+        const status = statuses[Math.floor(Math.random() * statuses.length)];
+        const seed = (100 + i) * 7 + 13;
+        students.push({
+          id: 'IN' + (100 + i),
+          name: name,
+          college: college,
+          branch: branch,
+          status: status,
+          email: name.toLowerCase().replace(' ', '.') + '@student.itp.edu',
+          phone: '+91 ' + (7000000000 + Math.floor(Math.random() * 900000000)),
+          year: 2024 + Math.floor(Math.random() * 3),
+          mentor: 'Dr. Ravi Kumar',
+          department: 'Industrial Training',
+          avatar: getAvatarUrl(name, seed)
+        });
+      }
+      return students;
+    }
+
+    const studentList = generateStudents(60);
+
+    // ===== LOGBOOK DATA =====
+    let logbookData = [
+      { id: 1, student: "Rahul Kumar", week: "Week 1", date: "2026-06-20", status: "pending", entry: "Completed onboarding and HTML/CSS basics. Started Git.", feedback: "", files: ["onboarding_notes.pdf", "html_practice.zip"] },
+      { id: 2, student: "Anjali Devi", week: "Week 2", date: "2026-06-21", status: "pending", entry: "JavaScript DOM manipulation, event handlers. Resolved closures with mentor.", feedback: "", files: ["dom_exercises.js"] },
+      { id: 3, student: "Vikram Reddy", week: "Week 3", date: "2026-06-19", status: "approved", entry: "Built weather app with React hooks, API integration.", feedback: "Great work! Add error handling for API failures.", files: ["weather_app.zip", "screenshot.png"] },
+      { id: 4, student: "Sneha Patel", week: "Week 4", date: "2026-06-22", status: "pending", entry: "Node.js + Express REST APIs, authentication work in progress.", feedback: "", files: ["api_routes.js", "auth_middleware.js"] },
+      { id: 5, student: "Arjun Singh", week: "Week 2", date: "2026-06-18", status: "rejected", entry: "Basic HTML/CSS, need more practice on flexbox/grid.", feedback: "Please resubmit with more complex layout exercises.", files: ["style.css"] },
+      { id: 6, student: "Priya Patel", week: "Week 1", date: "2026-06-17", status: "approved", entry: "Dev setup complete, Git workflow, first PR.", feedback: "Excellent start. Keep up the momentum.", files: ["git_commands.txt"] }
+    ];
+    let nextId = 7;
+    let uploadedFiles = {};
+
+    // ===== RENDER STUDENTS =====
+    function renderStudents() {
+      const tbody = document.getElementById('studentTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      studentList.forEach((s, idx) => {
+        const badgeClass = s.status === 'Active' ? 'active' : 'leave';
+        tbody.innerHTML += `
+          <tr>
+            <td>${idx + 1}</td>
+            <td><img src="${s.avatar}" alt="${s.name}" class="avatar-thumb" /></td>
+            <td>${s.name}</td>
+            <td>${s.id}</td>
+            <td>${s.college}</td>
+            <td><span class="badge" style="background:#e8f0fe;color:#1d4ed8;">${s.branch}</span></td>
+            <td><span class="badge ${badgeClass}">${s.status}</span></td>
+          </tr>
+        `;
+      });
+    }
+
+    // ===== RENDER LOGBOOK =====
+    function renderLogbook() {
+      const tbody = document.getElementById('logbookTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      let pending = 0, approved = 0, rejected = 0;
+      
+      logbookData.forEach((item, idx) => {
+        if (item.status === 'pending') pending++;
+        else if (item.status === 'approved') approved++;
+        else if (item.status === 'rejected') rejected++;
+        
+        const statusClass = item.status;
+        const label = item.status.charAt(0).toUpperCase() + item.status.slice(1);
+        const fileCount = item.files ? item.files.length : 0;
+        
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${item.student}</strong></td>
+            <td>${item.week}</td>
+            <td>${item.date}</td>
+            <td><span class="badge ${statusClass}">${label}</span></td>
+            <td>${fileCount > 0 ? `<i class="fas fa-paperclip"></i> ${fileCount}` : '-'}</td>
+            <td>
+              <div class="btn-group">
+                <button class="btn btn-outline btn-sm" onclick="viewLogbookDetail(${idx})"><i class="fas fa-eye"></i> Review</button>
+                ${item.status === 'pending' ? `
+                  <button class="btn btn-success btn-sm" onclick="approveLogbook(${idx})"><i class="fas fa-check"></i> Approve</button>
+                  <button class="btn btn-danger btn-sm" onclick="rejectLogbook(${idx})"><i class="fas fa-times"></i> Reject</button>
+                ` : `<span class="text-muted"><i class="fas fa-check-circle" style="color:${item.status==='approved'?'#1e7e34':'#c62828'};"></i> ${item.status==='approved'?'Approved':'Rejected'}</span>`}
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+      
+      document.getElementById('pendingCount').textContent = pending;
+      document.getElementById('approvedCount').textContent = approved;
+      document.getElementById('rejectedCount').textContent = rejected;
+      if (document.getElementById('dashPending')) document.getElementById('dashPending').textContent = pending;
+      if (document.getElementById('dashApproved')) document.getElementById('dashApproved').textContent = approved;
+    }
+
+    // ===== VIEW LOGBOOK DETAIL =====
+    function viewLogbookDetail(idx) {
+      const item = logbookData[idx];
+      if (!item) return;
+      const view = document.getElementById('logbookDetailView');
+      const content = document.getElementById('logbookDetailContent');
+      view.style.display = 'block';
+      
+      let filesHtml = '';
+      if (item.files && item.files.length > 0) {
+        filesHtml = `<div class="file-list"><strong><i class="fas fa-paperclip"></i> Attached Files:</strong>`;
+        item.files.forEach(file => {
+          filesHtml += `
+            <div class="file-item">
+              <i class="fas fa-file"></i>
+              <span>${file}</span>
+              <button class="btn btn-outline btn-sm" onclick="alert('Downloading ${file}...')"><i class="fas fa-download"></i></button>
+            </div>
+          `;
+        });
+        filesHtml += `</div>`;
+      } else {
+        filesHtml = `<p class="text-muted">No files attached.</p>`;
+      }
+
+      let feedbackHtml = '';
+      if (item.feedback) {
+        feedbackHtml = `
+          <div class="feedback-box" style="border-left:4px solid #1d4ed8;">
+            <strong><i class="fas fa-comment"></i> Previous Feedback:</strong>
+            <p style="margin-top:8px;">${item.feedback}</p>
+          </div>
+        `;
+      }
+
+      content.innerHTML = `
+        <div class="logbook-entry">
+          <p><strong>Student:</strong> ${item.student}</p>
+          <p><strong>Week:</strong> ${item.week}</p>
+          <p><strong>Submitted:</strong> ${item.date}</p>
+          <p><strong>Status:</strong> <span class="badge ${item.status}">${item.status}</span></p>
+          <p><strong>Entry:</strong></p>
+          <p style="background:white; padding:12px 16px; border-radius:12px; border:1px solid #eef2f7; margin-top:4px;">${item.entry}</p>
+        </div>
+        
+        ${filesHtml}
+        ${feedbackHtml}
+        
+        <div class="feedback-box" style="margin-top:16px;">
+          <strong><i class="fas fa-pen"></i> Provide Feedback</strong>
+          <textarea id="feedbackText" placeholder="Write your feedback for the student...">${item.feedback || ''}</textarea>
+          
+          <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+            <i class="fas fa-cloud-upload-alt" style="font-size:1.5rem; color:#1d4ed8;"></i>
+            <p style="margin-top:8px;"><label for="fileInput">Click to upload supporting files</label></p>
+            <p class="text-muted" style="font-size:0.8rem;">PDF, DOC, ZIP, images, etc.</p>
+            <input type="file" id="fileInput" multiple onchange="handleFileUpload(event, ${idx})" />
+          </div>
+          <div id="uploadedFilesList" style="margin-top:8px;"></div>
+          
+          <div style="margin-top:16px; display:flex; gap:12px; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="saveFeedback(${idx})"><i class="fas fa-save"></i> Save Feedback</button>
+            <button class="btn btn-success" onclick="approveWithFeedback(${idx})"><i class="fas fa-check"></i> Approve & Send</button>
+            <button class="btn btn-danger" onclick="rejectWithFeedback(${idx})"><i class="fas fa-times"></i> Reject & Send</button>
+          </div>
+        </div>
+      `;
+      
+      view.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.currentLogbookIndex = idx;
+    }
+
+    // ===== FILE UPLOAD =====
+    function handleFileUpload(event, idx) {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+      if (!uploadedFiles[idx]) uploadedFiles[idx] = [];
+      const fileList = document.getElementById('uploadedFilesList');
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        uploadedFiles[idx].push(file.name);
+        fileList.innerHTML += `
+          <div class="file-item">
+            <i class="fas fa-file"></i>
+            <span>${file.name} (${(file.size / 1024).toFixed(1)} KB)</span>
+            <button class="btn btn-danger btn-sm" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+          </div>
+        `;
+      }
+      event.target.value = '';
+    }
+
+    // ===== SAVE FEEDBACK =====
+    function saveFeedback(idx) {
+      const item = logbookData[idx];
+      if (!item) return;
+      const feedbackText = document.getElementById('feedbackText');
+      if (!feedbackText) return;
+      item.feedback = feedbackText.value;
+      if (uploadedFiles[idx]) {
+        if (!item.files) item.files = [];
+        uploadedFiles[idx].forEach(f => {
+          if (!item.files.includes(f)) item.files.push(f);
+        });
+        uploadedFiles[idx] = [];
+        document.getElementById('uploadedFilesList').innerHTML = '';
+      }
+      renderLogbook();
+      alert('Feedback saved successfully!');
+      viewLogbookDetail(idx);
+    }
+
+    function approveWithFeedback(idx) {
+      saveFeedback(idx);
+      const item = logbookData[idx];
+      if (item && item.status !== 'approved') {
+        item.status = 'approved';
+        renderLogbook();
+        alert(`Logbook for ${item.student} approved with feedback.`);
+        closeDetailView();
+      }
+    }
+
+    function rejectWithFeedback(idx) {
+      saveFeedback(idx);
+      const item = logbookData[idx];
+      if (item && item.status !== 'rejected') {
+        item.status = 'rejected';
+        renderLogbook();
+        alert(`Logbook for ${item.student} rejected with feedback.`);
+        closeDetailView();
+      }
+    }
+
+    function approveLogbook(idx) {
+      const item = logbookData[idx];
+      if (!item || item.status === 'approved') return;
+      item.status = 'approved';
+      if (!item.feedback) item.feedback = 'Approved by trainer.';
+      renderLogbook();
+      alert(`Approved ${item.student}`);
+      closeDetailView();
+    }
+
+    function rejectLogbook(idx) {
+      const item = logbookData[idx];
+      if (!item || item.status === 'rejected') return;
+      item.status = 'rejected';
+      if (!item.feedback) item.feedback = 'Rejected – please resubmit with improvements.';
+      renderLogbook();
+      alert(`Rejected ${item.student}`);
+      closeDetailView();
+    }
+
+    function addNewEntry() {
+      const name = prompt("Enter student name:");
+      if (!name) return;
+      const week = prompt("Enter week (e.g., Week 5):");
+      if (!week) return;
+      const entry = prompt("Enter logbook entry:");
+      if (!entry) return;
+      logbookData.push({
+        id: nextId++,
+        student: name,
+        week: week,
+        date: new Date().toISOString().split('T')[0],
+        status: 'pending',
+        entry: entry,
+        feedback: '',
+        files: []
+      });
+      renderLogbook();
+      alert('New logbook entry added!');
+    }
+
+    function closeDetailView() {
+      document.getElementById('logbookDetailView').style.display = 'none';
+    }
+
+    // ===== ATTENDANCE =====
+    let attendanceStatus = [];
+
+    function initAttendance() {
+      attendanceStatus = studentList.map(() => Math.random() > 0.25 ? 'Present' : 'Absent');
+      renderAttendance();
+    }
+
+    function renderAttendance() {
+      const tbody = document.getElementById('attendanceTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      let present = 0;
+      studentList.forEach((s, idx) => {
+        const status = attendanceStatus[idx] || 'Absent';
+        if (status === 'Present') present++;
+        const badgeClass = status === 'Present' ? 'present' : 'absent';
+        tbody.innerHTML += `
+          <tr>
+            <td>${idx + 1}</td>
+            <td><img src="${s.avatar}" alt="${s.name}" class="avatar-thumb" /></td>
+            <td>${s.name}</td>
+            <td>${s.id}</td>
+            <td><span class="badge" style="background:#e8f0fe;color:#1d4ed8;">${s.branch}</span></td>
+            <td><span class="badge ${badgeClass}">${status}</span></td>
+            <td>
+              <button class="btn btn-success btn-sm" onclick="setAttendance(${idx}, 'Present')"><i class="fas fa-check"></i></button>
+              <button class="btn btn-danger btn-sm" onclick="setAttendance(${idx}, 'Absent')"><i class="fas fa-times"></i></button>
+            </td>
+          </tr>
+        `;
+      });
+      document.getElementById('presentCount').textContent = `${present}/60`;
+    }
+
+    function setAttendance(idx, status) {
+      attendanceStatus[idx] = status;
+      renderAttendance();
+    }
+
+    function markAllPresent() {
+      attendanceStatus = attendanceStatus.map(() => 'Present');
+      renderAttendance();
+    }
+
+    function randomizeAttendance() {
+      attendanceStatus = attendanceStatus.map(() => Math.random() > 0.2 ? 'Present' : 'Absent');
+      renderAttendance();
+    }
+
+    // ===== NAVIGATION =====
+    function navigateTo(sectionId) {
+      document.querySelectorAll('.feature-detail').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById('section-' + sectionId);
+      if (target) target.classList.add('active');
+      document.querySelectorAll('.sidebar ul li').forEach(li => li.classList.remove('active'));
+      const menuItem = document.querySelector(`.sidebar ul li[data-section="${sectionId}"]`);
+      if (menuItem) menuItem.classList.add('active');
+      if (window.innerWidth <= 992) document.getElementById('sidebar').style.transform = 'translateX(-100%)';
+      if (sectionId === 'logbook') renderLogbook();
+      if (sectionId === 'attendance') renderAttendance();
+      if (sectionId === 'students') renderStudents();
+    }
+
+    document.querySelectorAll('.sidebar ul li').forEach(item => {
+      item.addEventListener('click', function() {
+        const section = this.dataset.section;
+        if (section) navigateTo(section);
+      });
+    });
+
+    function logout() { alert('Logged out'); navigateTo('dashboard'); }
+    
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.style.transform = sidebar.style.transform === 'translateX(-100%)' ? 'translateX(0)' : 'translateX(-100%)';
+    }
+    
+    window.addEventListener('resize', function() {
+      const sidebar = document.getElementById('sidebar');
+      if (window.innerWidth > 992) sidebar.style.transform = 'translateX(0)';
+      else sidebar.style.transform = 'translateX(-100%)';
+    });
+    
+    if (window.innerWidth <= 992) document.getElementById('sidebar').style.transform = 'translateX(-100%)';
+
+    // ===== INIT =====
+    initAttendance();
+    renderStudents();
+    renderLogbook();
+  </script>
+</body>
+</html>
